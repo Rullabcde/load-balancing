@@ -1,52 +1,23 @@
 version: "3"
 
 services:
-  nginx_lb1:
+  loadbalancer:
     image: nginx:latest
-    container_name: nginx_lb1
+    container_name: nginx_loadbalancer
+    ports:
+      - "80:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    networks:
-      app_net:
-        ipv4_address: 172.28.0.10
-
-  nginx_lb2:
-    image: nginx:latest
-    container_name: nginx_lb2
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    networks:
-      app_net:
-        ipv4_address: 172.28.0.11
-
-  keepalived:
-    image: osixia/keepalived:2.0.20
-    container_name: keepalived
-    cap_add:
-      - NET_ADMIN
-    volumes:
-      - ./keepalived/keepalived.conf:/usr/local/etc/keepalived/keepalived.conf:ro
-    networks:
-      app_net:
-        ipv4_address: 172.28.0.12
+    depends_on:
+      - web1
+      - web2
 
   web1:
     build:
       context: ./web1
     container_name: web1
-    networks:
-      - app_net
 
   web2:
     build:
       context: ./web2
     container_name: web2
-    networks:
-      - app_net
-
-networks:
-  app_net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.28.0.0/16
