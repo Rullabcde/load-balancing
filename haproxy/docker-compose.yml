@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  loadbalancer:
+    image: haproxy:latest
+    container_name: haproxy_loadbalancer
+    ports:
+      - "80:80"
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    depends_on:
+      - web1
+      - web2
+
+  web1:
+    build:
+      context: ./web1
+    container_name: web1
+
+  web2:
+    build:
+      context: ./web2
+    container_name: web2
