@@ -25,3 +25,6 @@ http:
       loadBalancer:
         servers:
         - url: "http://web2"
+
+log:
+  level: DEBUG
