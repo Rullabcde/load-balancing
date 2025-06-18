@@ -1,0 +1,14 @@
+http:
+  middlewares:
+    error-handler:
+      errors:
+        status:
+        - "500-599"
+        service: fallback
+        query: /
+
+  services:
+    fallback:
+      loadBalancer:
+        servers:
+        - url: "http://web2"
