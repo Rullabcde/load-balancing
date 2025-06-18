@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/traefik.yml:/traefik.yml
+    labels:
+      - "traefik.enable=true"
+
+  web1:
+    build:
+      context: ./web1
+    container_name: web1
+    labels:
+      - "traefik.http.routers.web.rule=Host(`lb.jetrullabcd.my.id`)"
+      - "traefik.http.services.web.loadbalancer.server.port=80"
+      - "traefik.http.services.web.loadbalancer.healthcheck.path=/"
+      - "traefik.http.services.web.loadbalancer.healthcheck.interval=5s"
+      - "traefik.http.services.web.loadbalancer.stickiness.cookie=true"
+
+  web2:
+    build:
+      context: ./web2
+    container_name: web2
+    labels:
+      - "traefik.http.routers.web.rule=Host(`lb.jetrullabcd.my.id`)"
+      - "traefik.http.services.web.loadbalancer.server.port=80"
+      - "traefik.http.services.web.loadbalancer.healthcheck.path=/"
+      - "traefik.http.services.web.loadbalancer.healthcheck.interval=5s"
+      - "traefik.http.services.web.loadbalancer.stickiness.cookie=true"

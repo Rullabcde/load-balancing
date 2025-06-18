@@ -1,0 +1,27 @@
+entryPoints:
+  web:
+    address: ":80"
+
+providers:
+  docker:
+    exposedByDefault: false
+  file:
+    filename: /traefik.yml
+
+api:
+  dashboard: true
+
+http:
+  middlewares:
+    error-handler:
+      errors:
+        status:
+        - "500-599"
+        service: fallback
+        query: /
+
+  services:
+    fallback:
+      loadBalancer:
+        servers:
+        - url: "http://web2"
